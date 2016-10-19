@@ -9,19 +9,19 @@
 import Foundation
 import UIKit
 
-extension NSTimer {
-    class func schedule(delay delay: NSTimeInterval, handler: NSTimer! -> Void) -> NSTimer {
-        let fireDate = delay + CFAbsoluteTimeGetCurrent()
+extension Timer {
+    class func schedule(delay _delay: TimeInterval, handler: @escaping (CFRunLoopTimer?) -> Void) -> CFRunLoopTimer {
+        let fireDate = _delay + CFAbsoluteTimeGetCurrent()
         let timer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, fireDate, 0, 0, 0, handler)
-        CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer, kCFRunLoopCommonModes)
-        return timer
+        CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer, CFRunLoopMode.commonModes)
+        return timer!
     }
     
-    class func schedule(repeatInterval interval: NSTimeInterval, handler: NSTimer! -> Void) -> NSTimer {
+    class func schedule(repeatInterval interval: TimeInterval, handler: @escaping (CFRunLoopTimer?) -> Void) -> CFRunLoopTimer {
         let fireDate = interval + CFAbsoluteTimeGetCurrent()
         let timer = CFRunLoopTimerCreateWithHandler(kCFAllocatorDefault, fireDate, interval, 0, 0, handler)
-        CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer, kCFRunLoopCommonModes)
-        return timer
+        CFRunLoopAddTimer(CFRunLoopGetCurrent(), timer, CFRunLoopMode.commonModes)
+        return timer!
     }
 }
 
@@ -32,7 +32,7 @@ extension CGRect {
             return self.origin.x
         }
         set {
-            self = CGRectMake(newValue, self.minY, self.width, self.height)
+            self = CGRect(x: newValue, y: self.minY, width: self.width, height: self.height)
         }
     }
     
@@ -41,7 +41,7 @@ extension CGRect {
             return self.origin.y
         }
         set {
-            self = CGRectMake(self.x, newValue, self.width, self.height)
+            self = CGRect(x: self.x, y: newValue, width: self.width, height: self.height)
         }
     }
     
@@ -50,7 +50,7 @@ extension CGRect {
             return self.size.width
         }
         set {
-            self = CGRectMake(self.x, self.width, newValue, self.height)
+            self = CGRect(x: self.x, y: self.width, width: newValue, height: self.height)
         }
     }
     
@@ -59,7 +59,7 @@ extension CGRect {
             return self.size.height
         }
         set {
-            self = CGRectMake(self.x, self.minY, self.width, newValue)
+            self = CGRect(x: self.x, y: self.minY, width: self.width, height: newValue)
         }
     }
     
@@ -78,7 +78,7 @@ extension CGRect {
             return self.origin.y + self.size.height
         }
         set {
-            self = CGRectMake(x, newValue - height, width, height)
+            self = CGRect(x: x, y: newValue - height, width: width, height: height)
         }
     }
     
@@ -96,7 +96,7 @@ extension CGRect {
             return x + width
         }
         set {
-            self = CGRectMake(newValue - width, y, width, height)
+            self = CGRect(x: newValue - width, y: y, width: width, height: height)
         }
     }
     
@@ -106,7 +106,7 @@ extension CGRect {
             return self.x + self.width / 2
         }
         set {
-            self = CGRectMake(newValue - width / 2, y, width, height)
+            self = CGRect(x: newValue - width / 2, y: y, width: width, height: height)
         }
     }
     
@@ -115,17 +115,17 @@ extension CGRect {
             return self.y + self.height / 2
         }
         set {
-            self = CGRectMake(x, newValue - height / 2, width, height)
+            self = CGRect(x: x, y: newValue - height / 2, width: width, height: height)
         }
     }
     
     
     var center: CGPoint {
         get {
-            return CGPointMake(self.midX, self.midY)
+            return CGPoint(x: self.midX, y: self.midY)
         }
         set {
-            self = CGRectMake(newValue.x - width / 2, newValue.y - height / 2, width, height)
+            self = CGRect(x: newValue.x - width / 2, y: newValue.y - height / 2, width: width, height: height)
         }
     }
 }

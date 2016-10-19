@@ -9,37 +9,37 @@
 import UIKit
 
 @objc
-public class TKSwarmAlert: NSObject {
+open class TKSwarmAlert: NSObject {
     
-    public var durationOfPreventingTapBackgroundArea: NSTimeInterval = 0
-    public var didDissmissAllViews: ()->Void = {}
+    open var durationOfPreventingTapBackgroundArea: TimeInterval = 0
+    open var didDissmissAllViews: ()->Void = {}
 
-    private var staticViews: [UIView] = []
+    fileprivate var staticViews: [UIView] = []
     var animationView: FallingAnimationView?
     var blurView: TKSWBackgroundView?
     let type: TKSWBackgroundType
   
   
     public override init() {
-      self.type = TKSWBackgroundType.Blur
+      self.type = TKSWBackgroundType.blur
     }
   
-    public init(backgroundType: TKSWBackgroundType = .Blur) {
+    public init(backgroundType: TKSWBackgroundType = .blur) {
         self.type = backgroundType
         super.init()
     }
     
-    public func addNextViews(views:[UIView]) {
+    open func addNextViews(_ views:[UIView]) {
         self.animationView?.nextViewsList.append(views)
     }
     
-    public func addSubStaticView(view:UIView) {
+    open func addSubStaticView(_ view:UIView) {
         view.tag = -1
         self.staticViews.append(view)
     }
     
-    public func show(views:[UIView]) {
-        let window:UIWindow? = UIApplication.sharedApplication().keyWindow
+    open func show(_ views:[UIView]) {
+        let window:UIWindow? = UIApplication.shared.keyWindow
         if window != nil {
             let frame:CGRect = window!.bounds
             blurView = TKSWBackgroundView(frame: frame, type: type)
@@ -47,20 +47,20 @@ public class TKSwarmAlert: NSObject {
             
             if durationOfPreventingTapBackgroundArea > 0 {
                 animationView?.enableToTapSuperView = false
-                NSTimer.schedule(delay: durationOfPreventingTapBackgroundArea) { [weak self] _ in
+                let _ = Timer.schedule(delay: durationOfPreventingTapBackgroundArea) { [weak self] _ in
                     self?.animationView?.enableToTapSuperView = true
                 }
             }
             
-            let showDuration:NSTimeInterval = 0.2
+            let showDuration:TimeInterval = 0.2
 
             for staticView in staticViews {
                 let originalAlpha = staticView.alpha
                 staticView.alpha = 0
                 animationView?.addSubview(staticView)
-                UIView.animateWithDuration(showDuration) {
+                UIView.animate(withDuration: showDuration, animations: {
                     staticView.alpha = originalAlpha
-                }
+                }) 
             }
             window!.addSubview(blurView!)
             window!.addSubview(animationView!)
@@ -69,15 +69,15 @@ public class TKSwarmAlert: NSObject {
             }
 
             animationView?.willDissmissAllViews = {
-                let fadeOutDuration:NSTimeInterval = 0.2
+                let fadeOutDuration:TimeInterval = 0.2
                 for v in self.staticViews {
-                    UIView.animateWithDuration(fadeOutDuration) {
+                    UIView.animate(withDuration: fadeOutDuration, animations: {
                         v.alpha = 0
-                    }
+                    }) 
                 }
-                UIView.animateWithDuration(fadeOutDuration) {
+                UIView.animate(withDuration: fadeOutDuration, animations: {
                     self.blurView?.alpha = 0
-                }
+                }) 
             }
             animationView?.didDissmissAllViews = {
                 self.blurView?.removeFromSuperview()
@@ -90,7 +90,7 @@ public class TKSwarmAlert: NSObject {
         }
     }
     
-    public func spawn(views:[UIView]) {
+    open func spawn(_ views:[UIView]) {
         self.animationView?.spawn(views)
     }
 }
